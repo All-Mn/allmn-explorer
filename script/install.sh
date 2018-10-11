@@ -128,7 +128,7 @@ EOL
     sudo systemctl start allmnd
     sudo systemctl enable allmnd
     echo "Sleeping for 1 hour while node syncs blockchain..."
-    sleep 1h
+    #sleep 1h
     clear
 }
 
@@ -197,7 +197,7 @@ clear
 
 # Variables
 echo "Setting up variables..."
-bwklink=`curl -s https://api.github.com/repos/All-Mn/AllMnCore/releases/latest | grep browser_download_url | grep linux64 | cut -d '"' -f 4`
+bwklink=`curl -s https://api.github.com/repos/All-Mn/AllMnCore/releases/latest | grep browser_download_url | grep Daemon | cut -d '"' -f 4`
 rpcuser=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo '')
 rpcpassword=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 32 ; echo '')
 echo "Repo: $bwklink"
