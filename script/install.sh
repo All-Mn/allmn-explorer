@@ -98,7 +98,7 @@ installBulwark () {
     rm -rf /tmp/allmn
     mkdir -p /home/explorer/.allmn
     cat > /home/explorer/.allmn/allmn.conf << EOL
-rpcport=52544
+rpcport=30600
 rpcuser=$rpcuser
 rpcpassword=$rpcpassword
 daemon=1
@@ -134,7 +134,7 @@ EOL
 
 installBlockEx () {
     echo "Installing BlockEx..."
-    git clone https://github.com/allmn-crypto/allmn-ex.git /home/explorer/blockex
+    git clone https://github.com/All-Mn/allmn-explorer.git /home/explorer/blockex
     cd /home/explorer/blockex
     yarn install
     cat > /home/explorer/blockex/config.js << EOL
