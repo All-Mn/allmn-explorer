@@ -4,14 +4,14 @@
  */
 const config = {
   'api': {
-    'host': 'https://explorer.bulwarkcrypto.com',
+    'host': 'https://explorer.allmn.org',
     'port': '443',
     'prefix': '/api',
     'timeout': '5s'
   },
   'coinMarketCap': {
     'api': 'http://api.coinmarketcap.com/v1/ticker/',
-    'ticker': 'bulwark'
+    'ticker': 'allmn'
   },
   'db': {
     'host': '127.0.0.1',
@@ -26,7 +26,7 @@ const config = {
   'rpc': {
     'host': '127.0.0.1',
     'port': '52541',
-    'user': 'bulwarkrpc',
+    'user': 'allmnrpc',
     'pass': 'someverysafepassword',
     'timeout': 8000, // 8 seconds
   }

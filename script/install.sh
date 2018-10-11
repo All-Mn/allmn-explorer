@@ -25,7 +25,7 @@ server {
 
     root /var/www/html;
     index index.html index.htm index.nginx-debian.html;
-    #server_name explorer.bulwarkcrypto.com;
+    #server_name ex.allmn.org;
     server_name _;
 
     gzip on;
@@ -51,21 +51,21 @@ server {
 
     #listen [::]:443 ssl ipv6only=on; # managed by Certbot
     #listen 443 ssl; # managed by Certbot
-    #ssl_certificate /etc/letsencrypt/live/explorer.bulwarkcrypto.com/fullchain.pem; # managed by Certbot
-    #ssl_certificate_key /etc/letsencrypt/live/explorer.bulwarkcrypto.com/privkey.pem; # managed by Certbot
+    #ssl_certificate /etc/letsencrypt/live/ex.allmn.org/fullchain.pem; # managed by Certbot
+    #ssl_certificate_key /etc/letsencrypt/live/ex.allmn.org/privkey.pem; # managed by Certbot
     #include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
     #ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 }
 
 #server {
-#    if ($host = explorer.bulwarkcrypto.com) {
+#    if ($host = ex.allmn.org) {
 #        return 301 https://\$host\$request_uri;
 #    } # managed by Certbot
 #
 #	listen 80 default_server;
 #	listen [::]:80 default_server;
 #
-#	server_name explorer.bulwarkcrypto.com;
+#	server_name ex.allmn.org;
 #   return 404; # managed by Certbot
 #}
 EOL
@@ -89,37 +89,44 @@ installMongo () {
 
 installBulwark () {
     echo "Installing Bulwark..."
-    mkdir -p /tmp/bulwark
-    cd /tmp/bulwark
-    curl -Lo bulwark.tar.gz $bwklink
-    tar -xzf bulwark.tar.gz
-    sudo mv ./bin/* /usr/local/bin
+    mkdir -p /tmp/allmn
+    cd /tmp/allmn
+    curl -Lo AllMN-Daemon.Ubuntu.v1.0.0.0.tar.gz $bwklink
+    tar -xzf AllMN-Daemon.Ubuntu.v1.0.0.0.tar.gz
+    sudo mv allmn* /usr/local/bin
     cd
-    rm -rf /tmp/bulwark
-    mkdir -p /home/explorer/.bulwark
-    cat > /home/explorer/.bulwark/bulwark.conf << EOL
+    rm -rf /tmp/allmn
+    mkdir -p /home/explorer/.allmn
+    cat > /home/explorer/.allmn/allmn.conf << EOL
 rpcport=52544
 rpcuser=$rpcuser
 rpcpassword=$rpcpassword
 daemon=1
 txindex=1
+addnode=194.67.201.232
+addnode=185.238.138.71
+addnode=213.183.59.228
+addnode=194.67.201.232
+addnode=185.238.138.71
+addnode=193.124.191.135:20500
+addnode=213.183.59.228
 EOL
-    sudo cat > /etc/systemd/system/bulwarkd.service << EOL
+    sudo cat > /etc/systemd/system/allmnd.service << EOL
 [Unit]
-Description=bulwarkd
+Description=allmnd
 After=network.target
 [Service]
 Type=forking
 User=explorer
 WorkingDirectory=/home/explorer
-ExecStart=/home/explorer/bin/bulwarkd -datadir=/home/explorer/.bulwark
-ExecStop=/home/explorer/bin/bulwark-cli -datadir=/home/explorer/.bulwark stop
+ExecStart=/home/explorer/bin/allmnd -datadir=/home/explorer/.allmn
+ExecStop=/home/explorer/bin/allmn-cli -datadir=/home/explorer/.allmn stop
 Restart=on-abort
 [Install]
 WantedBy=multi-user.target
 EOL
-    sudo systemctl start bulwarkd
-    sudo systemctl enable bulwarkd
+    sudo systemctl start allmnd
+    sudo systemctl enable allmnd
     echo "Sleeping for 1 hour while node syncs blockchain..."
     sleep 1h
     clear
@@ -127,20 +134,20 @@ EOL
 
 installBlockEx () {
     echo "Installing BlockEx..."
-    git clone https://github.com/bulwark-crypto/bulwark-explorer.git /home/explorer/blockex
+    git clone https://github.com/allmn-crypto/allmn-ex.git /home/explorer/blockex
     cd /home/explorer/blockex
     yarn install
     cat > /home/explorer/blockex/config.js << EOL
 const config = {
   'api': {
-    'host': 'https://explorer.bulwarkcrypto.com',
+    'host': 'https://ex.allmn.org',
     'port': '3000',
     'prefix': '/api',
     'timeout': '180s'
   },
   'coinMarketCap': {
     'api': 'http://api.coinmarketcap.com/v1/ticker/',
-    'ticker': 'bulwark'
+    'ticker': 'allmn'
   },
   'db': {
     'host': '127.0.0.1',
@@ -154,7 +161,7 @@ const config = {
   },
   'rpc': {
     'host': '127.0.0.1',
-    'port': '52544',
+    'port': '30600',
     'user': '$rpcuser',
     'pass': '$rpcpassword',
     'timeout': 12000, // 12 seconds
@@ -190,7 +197,7 @@ clear
 
 # Variables
 echo "Setting up variables..."
-bwklink=`curl -s https://api.github.com/repos/bulwark-crypto/bulwark/releases/latest | grep browser_download_url | grep linux64 | cut -d '"' -f 4`
+bwklink=`curl -s https://api.github.com/repos/All-Mn/AllMnCore/releases/latest | grep browser_download_url | grep linux64 | cut -d '"' -f 4`
 rpcuser=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo '')
 rpcpassword=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 32 ; echo '')
 echo "Repo: $bwklink"
@@ -215,4 +222,3 @@ else
     pm2 restart index
     echo "BlockEx updated!"
 fi
-
