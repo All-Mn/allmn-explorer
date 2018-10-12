@@ -11,7 +11,7 @@ if (!config.db.user || !config.db.pass) {
 
 /* Database */
 // Connect to the database.
-mongoose.connect(db.getDSN(), db.getOptions());
+mongoose.connect(db.getDSN());
 
 /* Add User */
 // Create the database user.
